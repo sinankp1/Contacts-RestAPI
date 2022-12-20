@@ -12,10 +12,10 @@ app.use(logger("dev"));
 app.use(cors());
 
 // routes
-app.use("/",userRoutes)
+app.use("/", userRoutes);
 // database connection
 connect();
 
-app.listen(process.env.PORT,()=>{
-    console.log(`listening on port ${process.env.PORT}`);
-})
+app.listen(process.env.PORT, () => {
+  console.log(`listening on port ${process.env.PORT}`);
+});

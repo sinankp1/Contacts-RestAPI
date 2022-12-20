@@ -130,6 +130,55 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+exports.editUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { first_name, last_name, phone } = req.body;
+    // find user by id
+    const user = await User.findById(userId);
+    // validate phone number
+    if (phone) {
+      if (!validatePhone(phone)) {
+        return res
+          .status(400)
+          .json({ message: "Phone number should be 10 digits" });
+      }
+      if (user.phone == phone)
+        return res.status(400).json({
+          message: "Please pick a different number than you already have",
+        });
+      const phoneUser = await User.findOne({ phone: phone });
+      if (phoneUser)
+        return res
+          .status(400)
+          .json({ message: "This mobile number is already in use" });
+    }
+    // validate name
+    if (first_name)
+      if (!validateLength(first_name, 3, 30)) {
+        return res.status(400).json({
+          message: "First name should be between 3 and 30 characters",
+        });
+      }
+    if (last_name)
+      if (!validateLength(last_name, 1, 30)) {
+        return res
+          .status(400)
+          .json({ message: "Last name should be between 3 and 30 characters" });
+      }
+    // update user with details
+    const response = await User.findByIdAndUpdate(userId, {
+      $set: { first_name: first_name, last_name: last_name, phone: phone },
+    });
+    // send response back to the client
+    res.status(200).json({
+      status: "User details updated",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message });
+  }
+};
 exports.getUser = async (req, res) => {
   try {
     const userId = req.params.id;
