@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 module.exports.connect = () => {
+  mongoose.set("strictQuery",false);
   mongoose
     .connect(process.env.DATABASE_URI, {
       useNewUrlParser: true,
